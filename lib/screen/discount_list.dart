@@ -26,14 +26,27 @@ class _DiscountListState extends State<DiscountList> {
   }
 
   Future<void> _addData() async {
-    await SQLHelper.createData(_productController.text, _volumeController.text,
-        _unitrateController.text);
+    await SQLHelper.createData(
+      _vehicleController.text,
+      _numberController.text,
+      _productController.text,
+      _volumeController.text,
+      _unitrateController.text,
+      _totalController.text,
+    );
     _refreshData();
   }
 
   Future<void> _updateData(int id) async {
-    await SQLHelper.updateData(id, _productController.text,
-        _volumeController.text, _unitrateController.text);
+    await SQLHelper.updateData(
+      id,
+      _vehicleController.text,
+      _numberController.text,
+      _productController.text,
+      _volumeController.text,
+      _unitrateController.text,
+      _totalController.text,
+    );
     _refreshData();
   }
 
@@ -48,9 +61,12 @@ class _DiscountListState extends State<DiscountList> {
     _refreshData();
   }
 
+  final TextEditingController _vehicleController = TextEditingController();
+  final TextEditingController _numberController = TextEditingController();
   final TextEditingController _productController = TextEditingController();
   final TextEditingController _volumeController = TextEditingController();
   final TextEditingController _unitrateController = TextEditingController();
+  final TextEditingController _totalController = TextEditingController();
 
   void showBottomSheet(int? id) async {
     //if id is not null then it will update otherwise it will be added
@@ -58,9 +74,12 @@ class _DiscountListState extends State<DiscountList> {
     if (id != null) {
       final existingData =
           _allData.firstWhere((element) => element['id'] == id);
+      _vehicleController.text = existingData['vehicle'];
+      _numberController.text = existingData['number'];
       _productController.text = existingData['product'];
       _volumeController.text = existingData['volume'];
       _unitrateController.text = existingData['unitrate'];
+      _totalController.text = existingData['total'];
     }
 
     showModalBottomSheet(
@@ -79,14 +98,40 @@ class _DiscountListState extends State<DiscountList> {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             TextField(
+              controller: _vehicleController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "Vehicle Number",
+                isDense: true, // Added this
+                //contentPadding: EdgeInsets.all(8),
+              ),
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            TextField(
+              keyboardType: TextInputType.number,
+              controller: _numberController,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "Customer Phone Number",
+                isDense: true, // Added this
+                //contentPadding: EdgeInsets.all(8),
+              ),
+            ),
+            SizedBox(
+              height: 5,
+            ),
+            TextField(
               controller: _productController,
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "Product",
+                isDense: true,
               ),
             ),
             SizedBox(
-              height: 10,
+              height: 5,
             ),
             TextField(
               keyboardType: TextInputType.number,
@@ -95,10 +140,11 @@ class _DiscountListState extends State<DiscountList> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "Volume",
+                isDense: true,
               ),
             ),
             SizedBox(
-              height: 10,
+              height: 5,
             ),
             TextField(
               controller: _unitrateController,
@@ -106,10 +152,23 @@ class _DiscountListState extends State<DiscountList> {
               decoration: InputDecoration(
                 border: OutlineInputBorder(),
                 hintText: "Unit Rate",
+                isDense: true,
               ),
             ),
             SizedBox(
-              height: 20,
+              height: 5,
+            ),
+            TextField(
+              controller: _totalController,
+              //maxLines: 4,
+              decoration: InputDecoration(
+                border: OutlineInputBorder(),
+                hintText: "TOTAL",
+                isDense: true,
+              ),
+            ),
+            SizedBox(
+              height: 10,
             ),
             Center(
               child: ElevatedButton(
@@ -121,16 +180,19 @@ class _DiscountListState extends State<DiscountList> {
                     await _updateData(id);
                   }
 
+                  _vehicleController.text = "";
+                  _numberController.text = "";
                   _productController.text = "";
                   _volumeController.text = "";
                   _unitrateController.text = "";
+                  _totalController.text = "";
 
 //Hide Bottom Sheet
                   Navigator.of(context).pop();
                   print("Data Added");
                 },
                 child: Padding(
-                  padding: EdgeInsets.all(18),
+                  padding: EdgeInsets.all(10),
                   child: Text(
                     id == null ? "Add Data" : "Update",
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
@@ -164,13 +226,13 @@ class _DiscountListState extends State<DiscountList> {
                   title: Padding(
                     padding: EdgeInsets.symmetric(vertical: 5),
                     child: Text(
-                      _allData[index]['product'],
+                      _allData[index]['vehicle'],
                       style: TextStyle(
                         fontSize: 20,
                       ),
                     ),
                   ),
-                  subtitle: Text(_allData[index]['unitrate']),
+                  subtitle: Text(_allData[index]['number']),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [

@@ -5,9 +5,12 @@ class SQLHelper {
     await database.execute("""
 CREATE TABLE discount(
   id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
+  vehicle TEXT,
+  number TEXT,
   product TEXT,
   volume TEXT,
   unitrate TEXT,
+  total TEXT,
   createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
   )
 """);
@@ -21,13 +24,23 @@ CREATE TABLE discount(
   }
 
   static Future<int> createData(
+    String vehicle,
+    String number,
     String product,
     String volume,
     String? unitrate,
+    String total,
   ) async {
     final db = await SQLHelper.db();
 
-    final data = {'product': product, 'volume': volume, 'unitrate': unitrate};
+    final data = {
+      'vehicle': vehicle,
+      'number': number,
+      'product': product,
+      'volume': volume,
+      'unitrate': unitrate,
+      'total': total,
+    };
     final id = await db.insert('discount', data,
         conflictAlgorithm: sql.ConflictAlgorithm.replace);
 
@@ -44,13 +57,16 @@ CREATE TABLE discount(
     return db.query('discount', where: "id = ?", whereArgs: [id], limit: 1);
   }
 
-  static Future<int> updateData(
-      int id, String product, String volume, String? unitrate) async {
+  static Future<int> updateData(int id, String vehicle, String number,
+      String product, String volume, String? unitrate, String total) async {
     final db = await SQLHelper.db();
     final data = {
+      'vehicle': vehicle,
+      'number': number,
       'product': product,
       'volume': volume,
       'unitrate': unitrate,
+      'total': total,
       'createdAt': DateTime.now().toString()
     };
     final result =
